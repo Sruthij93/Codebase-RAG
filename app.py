@@ -88,18 +88,25 @@ st.sidebar.info(
 )
 st.sidebar.title("Select Github Repo")
 
+# Add selected_repo as a key to session state
+if "selected_repo" not in st.session_state:
+    st.session_state.selected_repo = None
+# Initialize messsages in session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+  
 # Initially, no repo selected
-selected_repo = st.sidebar.selectbox("Choose a repository to explore:", ["Select a repository"] + repos)
-
-# Re-initialize chat history when repo is changed
-# if selected_repo != "Select a repository":
+selected_repo = st.sidebar.selectbox("Choose a repository to explore:", ["Select a repository"] + repos)    
 
 st.write(f"You have selected the repository: {selected_repo}")
 
-# Re-initialize chat history if repo is selected or changed or st.session_state.get("selected_repo") != selected_repo:
-if "messages" not in st.session_state:
+# Check if the repository selection has changed
+if selected_repo != st.session_state.selected_repo:
+    # Update the session state with the new repository
+    st.session_state.selected_repo = selected_repo
+    # Clear chat messages
     st.session_state.messages = []
-    # st.session_state.selected_repo = selected_repo
+    # TODO: keep messages in session state and display them when going back to a previously selected repo
 
 # Display chat messages
 for message in st.session_state.messages:
@@ -122,6 +129,3 @@ if prompt := st.chat_input("Ask a question about the codebase:"):
         response = st.write_stream(response_generator(prompt, selected_repo))
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response})
-
-# else:
-#     st.write("Please select a repository to start the conversation.")
