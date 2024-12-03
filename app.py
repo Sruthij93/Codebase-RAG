@@ -71,11 +71,9 @@ repos = [
 # Streamed response emulator
 def response_generator(prompt, repo):
     response = perform_rag(prompt, repo)
-
-    response_parts = response.split("\n")
-    for part in response_parts:
+    for word in response.split("\n"):
         # Yield each part, ensuring newlines are preserved and streaming happens
-        yield part + "\n"
+        yield word + "\n"
         time.sleep(0.05)
 
 # Streamlit UI
@@ -94,37 +92,36 @@ st.sidebar.title("Select Github Repo")
 selected_repo = st.sidebar.selectbox("Choose a repository to explore:", ["Select a repository"] + repos)
 
 # Re-initialize chat history when repo is changed
-if selected_repo != "Select a repository":
+# if selected_repo != "Select a repository":
 
-    st.write(f"You have selected the repository: {selected_repo}")
+st.write(f"You have selected the repository: {selected_repo}")
 
-    # Re-initialize chat history if repo is selected or changed
-    if "messages" not in st.session_state or st.session_state.get("selected_repo") != selected_repo:
-        st.session_state.messages = []
-        st.session_state.selected_repo = selected_repo
+# Re-initialize chat history if repo is selected or changed or st.session_state.get("selected_repo") != selected_repo:
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    # st.session_state.selected_repo = selected_repo
 
-    # Display chat messages
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+# Display chat messages
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-    # Handle new user input
-    if prompt := st.chat_input("Ask a question about the codebase:"):
-        # Save the user message
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+# Handle new user input
+if prompt := st.chat_input("Ask a question about the codebase:"):
+    # Save the user message
+    st.session_state.messages.append({"role": "user", "content": prompt})  
+    with st.chat_message("user"):
+        st.markdown(prompt)
+      
 
-        # Get response from the backend
-        with st.spinner("Fetching response..."):
-            # Display assistant response in chat message container
-            with st.chat_message("assistant"):
-                # stream = response_generator(prompt, selected_repo)
-                response = st.write(perform_rag(prompt, selected_repo))
-                # for chunk in stream:
-                #     st.markdown(chunk)
-            # Add assistant response to chat history
-            st.session_state.messages.append({"role": "assistant", "content": response})
+    # Get response from the backend
+    # with st.spinner("Fetching response..."):
+    # Display assistant response in chat message container
+    with st.chat_message("assistant"):
+        # stream = response_generator(prompt, selected_repo)
+        response = st.write_stream(response_generator(prompt, selected_repo))
+    # Add assistant response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": response})
 
-else:
-    st.write("Please select a repository to start the conversation.")
+# else:
+#     st.write("Please select a repository to start the conversation.")
