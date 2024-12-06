@@ -82,6 +82,7 @@ def response_generator(prompt, repo):
 st.title("🤖 CodeSage 🤖")
 
 # Sidebar
+st.sidebar.title("🤖 CodeSage 🤖")
 st.sidebar.title("💡 About")
 st.sidebar.info(
     "CodeSage answers your questions on a specific codebase using RAG (Retrieval Augmented Generation)."
