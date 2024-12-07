@@ -10,7 +10,7 @@ from pinecone import Pinecone
 # from langchain.text_splitter import RecursiveCharacterTextSplitter
 from openai import OpenAI
 import time
-import numpy
+import numpy as np
 
 # Initialize Pinecone
 pc = Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
