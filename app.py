@@ -1,13 +1,13 @@
 import streamlit as st
 import os
-from github import Github
-from git import Repo
+# from github import Github
+# from git import Repo
 from sentence_transformers import SentenceTransformer
-from langchain_pinecone import PineconeVectorStore
-from langchain_community.embeddings import HuggingFaceEmbeddings
+# from langchain_pinecone import PineconeVectorStore
+# from langchain_community.embeddings import HuggingFaceEmbeddings
 from pinecone import Pinecone
-from langchain.schema import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+# from langchain.schema import Document
+# from langchain.text_splitter import RecursiveCharacterTextSplitter
 from openai import OpenAI
 import time
 
