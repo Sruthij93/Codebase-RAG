@@ -9,7 +9,6 @@ from pinecone import Pinecone
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from openai import OpenAI
-from api_utils import list_repositiories, get_api_response
 import time
 
 # Initialize Pinecone
