@@ -1,4 +1,5 @@
 # 🧑‍💻 **Codebase Chatbot with Retrieval-Augmented Generation (RAG)**  
+### Website URL: https://codebase-rag-sj.streamlit.app
 
 An AI-powered chatbot that allows users to interact with and understand codebases by leveraging **Retrieval-Augmented Generation (RAG)**. This tool embeds the content of code repositories, stores them in a vector database, and uses Large Language Models (LLMs) to answer queries contextually.
 
