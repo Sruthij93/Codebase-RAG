@@ -70,11 +70,9 @@ repos = [
 # Streamed response emulator
 def response_generator(prompt, repo):
     response = perform_rag(prompt, repo)
-
-    response_parts = response.split("\n")
-    for part in response_parts:
+    for word in response.split("\n"):
         # Yield each part, ensuring newlines are preserved and streaming happens
-        yield part + "\n"
+        yield word + "\n"
         time.sleep(0.05)
 
 # Streamlit UI
@@ -83,47 +81,51 @@ def response_generator(prompt, repo):
 st.title("🤖 CodeSage 🤖")
 
 # Sidebar
+st.sidebar.title("🤖 CodeSage 🤖")
 st.sidebar.title("💡 About")
 st.sidebar.info(
     "CodeSage answers your questions on a specific codebase using RAG (Retrieval Augmented Generation)."
 )
 st.sidebar.title("Select Github Repo")
 
+# Add selected_repo as a key to session state
+if "selected_repo" not in st.session_state:
+    st.session_state.selected_repo = None
+# Initialize messsages in session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+  
 # Initially, no repo selected
-selected_repo = st.sidebar.selectbox("Choose a repository to explore:", ["Select a repository"] + repos)
+selected_repo = st.sidebar.selectbox("Choose a repository to explore:", ["Select a repository"] + repos)    
 
-# Re-initialize chat history when repo is changed
-if selected_repo != "Select a repository":
+st.write(f"You have selected the repository: {selected_repo}")
 
-    st.write(f"You have selected the repository: {selected_repo}")
+# Check if the repository selection has changed
+if selected_repo != st.session_state.selected_repo:
+    # Update the session state with the new repository
+    st.session_state.selected_repo = selected_repo
+    # Clear chat messages
+    st.session_state.messages = []
+    # TODO: keep messages in session state and display them when going back to a previously selected repo
 
-    # Re-initialize chat history if repo is selected or changed
-    if "messages" not in st.session_state or st.session_state.get("selected_repo") != selected_repo:
-        st.session_state.messages = []
-        st.session_state.selected_repo = selected_repo
+# Display chat messages
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-    # Display chat messages
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+# Handle new user input
+if prompt := st.chat_input("Ask a question about the codebase:"):
+    # Save the user message
+    st.session_state.messages.append({"role": "user", "content": prompt})  
+    with st.chat_message("user"):
+        st.markdown(prompt)
+      
 
-    # Handle new user input
-    if prompt := st.chat_input("Ask a question about the codebase:"):
-        # Save the user message
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        # Get response from the backend
-        with st.spinner("Fetching response..."):
-            # Display assistant response in chat message container
-            with st.chat_message("assistant"):
-                # stream = response_generator(prompt, selected_repo)
-                response = st.write(perform_rag(prompt, selected_repo))
-                # for chunk in stream:
-                #     st.markdown(chunk)
-            # Add assistant response to chat history
-            st.session_state.messages.append({"role": "assistant", "content": response})
-
-else:
-    st.write("Please select a repository to start the conversation.")
+    # Get response from the backend
+    # with st.spinner("Fetching response..."):
+    # Display assistant response in chat message container
+    with st.chat_message("assistant"):
+        # stream = response_generator(prompt, selected_repo)
+        response = st.write_stream(response_generator(prompt, selected_repo))
+    # Add assistant response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": response})
