@@ -37,7 +37,7 @@ An AI-powered chatbot that allows users to interact with and understand codebase
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/codebase-rag.git
+git clone https://github.com/Sruthij93/Codebase-RAG
 cd codebase-rag
 ```
 ### 2.  Install Dependencies
