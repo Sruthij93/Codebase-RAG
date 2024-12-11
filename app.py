@@ -87,7 +87,7 @@ st.sidebar.title("💡 About")
 st.sidebar.info(
     "CodeSage answers your questions on a specific codebase using RAG (Retrieval Augmented Generation)."
 )
-st.sidebar.title("Select Github Repo")
+
 
 # Add selected_repo as a key to session state
 if "selected_repo" not in st.session_state:
@@ -95,19 +95,20 @@ if "selected_repo" not in st.session_state:
 # Initialize messsages in session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
-  
-# Initially, no repo selected
-selected_repo = st.sidebar.selectbox("Choose a repository to explore:", ["Select a repository"] + repos)    
 
-st.write(f"You have selected the repository: {selected_repo}")
+with st.sidebar.expander("Select Github Repo"):  
+    # Initially, no repo selected
+    selected_repo = st.selectbox("Choose a repository to explore:", ["Select a repository"] + repos)    
 
-# Check if the repository selection has changed
-if selected_repo != st.session_state.selected_repo:
-    # Update the session state with the new repository
-    st.session_state.selected_repo = selected_repo
-    # Clear chat messages
-    st.session_state.messages = []
-    # TODO: keep messages in session state and display them when going back to a previously selected repo
+    st.write(f"You have selected the repository: {selected_repo}")
+
+    # Check if the repository selection has changed
+    if selected_repo != st.session_state.selected_repo:
+        # Update the session state with the new repository
+        st.session_state.selected_repo = selected_repo
+        # Clear chat messages
+        st.session_state.messages = []
+        # TODO: keep messages in session state and display them when going back to a previously selected repo
 
 # Display chat messages
 for message in st.session_state.messages:
